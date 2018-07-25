@@ -5,63 +5,22 @@ public class main
 
     public static void main(String[] args)
     {
-     //Creación de objetos provisinales para crear cuenta
-
-        //crear objeto tipo consumidor
-        Customer customer=new Customer(1,"Juan Castillo",8928000,"Juancho","juan1996");
-
-        //crear objeto tipo direccion
-        Address address=new Address(1,"Calle 8","# 7-45","Bogotá D.C","Colombia",true);
-
-        //crear medio de pago por cheque
-        PaymentMethod method=new Check(1,12345,4567,"Juan Castillo");
-
-        //crear objeto tipo issuer
-        Issuer issuer=new Issuer(Issuer.Iss.MASTERCARD);
-
-        //obtener fecha
-        Calendar calendar = GregorianCalendar.getInstance();
-        Date date = calendar.getTime();
-        //crear medio de pago por tarjeta de credito
-        PaymentMethod method1=new CreditCard(2,123456789,date,10,issuer);
-
-        //crear lista con medios de pago
-        List<PaymentMethod> l=new ArrayList<>();
-        l.add(method);
-        l.add(method1);
-
-        //crear lista de direcciones
-        List<Address> a=new ArrayList<>();
-        a.add(address);
-
-        //--------------------------------------------------
-        //CREACION DE ORDEN Y CARRO DE COMPRAS
-
-        //crear producto
-        Product p=new Product("CF01-300","Healthy Coffee","Coffee sweet and delicious");
-        //crear lineItem
-        LineItem lItem=new LineItem(1,8350.99,p);
-        List<LineItem> listItems=new ArrayList<>();
-        listItems.add(lItem);
-
-        //crear orden
-        Order ord=new Order(123,date,OrderStatus.SHIPPED,address.getAddress(),0,listItems);
-
-        //agregar nuevo producto a la orden
-        p=new Product("PH02-B","Toilet paper","Soft toilet paper");
-        lItem=new LineItem(2,12999.99,p);
-        ord.addItem(lItem);
-
-        //crear carrito de compras
-        ShoppingCart cart=new ShoppingCart(ord.getItems());
-
-     //CREAR CUENTA
-        Account account=new Account(1,customer,AccountStatus.ACTIVE,cart,a,l);
-
-     //Eliminar objetos provisionales
-        customer=null;address=null;method=null;issuer=null;calendar=null;date=null;method1=null;l=null;a=null;
-        p=null;lItem=null;listItems=null;
-        System.gc();
+        //CREAR CUENTA
+        Account account=new Account(1,new Customer(1,"Juan Castillo",8928000,"Juancho","juan1996"),
+                AccountStatus.ACTIVE,new ShoppingCart(new ArrayList<>()), new ArrayList<>(), new ArrayList<>());
+        //AGREGAR ITEMS AL CARRO, METODOS DE PAGO Y DIRECCIONES AL USUARIO
+        account.getCart().addItem(new LineItem(1,8350.99,new Product("CF01-300","Healthy Coffee","Coffee sweet and delicious")));
+        account.getCart().addItem(new LineItem(2,12999.99,new Product("PH02-B","Toilet paper","Soft toilet paper")));
+        account.getMethod().add(new Check(1,12345,4567,"Juan Castillo"));
+        account.getMethod().add(new CreditCard(2,123456789,GregorianCalendar.getInstance().getTime(),10,new Issuer(Issuer.Iss.MASTERCARD)));
+        account.getAddresses().add(new Address(1,"Calle 8","# 7-45","Bogotá D.C","Colombia",true));
+        //CREAR ORDEN
+        Order ord=new Order(123,GregorianCalendar.getInstance().getTime(),OrderStatus.SHIPPED,
+                new Address(1,"Calle 8","# 7-45","Bogotá D.C","Colombia",true).getAddress(),
+                0,new ArrayList<>());
+        //AGREGAR ITEMS A LA ORDEN
+        ord.addItem(new LineItem(1,8350.99,new Product("CF01-300","Healthy Coffee","Coffee sweet and delicious")));
+        ord.addItem(new LineItem(2,12999.99,new Product("PH02-B","Toilet paper","Soft toilet paper")));
 
         //INICIO DE SESION EN CUENTA
         Scanner sc=new Scanner(System.in);
@@ -101,9 +60,9 @@ public class main
             System.out.println("PRODUCT\t\t\tQUANTITY\t\t\tPRICExUNIT");
             for(int i=0;i<account.getCart().getItems().size();i++)
             {
-                System.out.print("\n"+cart.getItems().get(i).getProduct().getName());
-                System.out.print("\t\t\t"+cart.getItems().get(i).getQuantity());
-                System.out.print("\t\t\t"+cart.getItems().get(i).getPrice());
+                System.out.print("\n"+account.getCart().getItems().get(i).getProduct().getName());
+                System.out.print("\t\t\t"+account.getCart().getItems().get(i).getQuantity());
+                System.out.print("\t\t\t"+account.getCart().getItems().get(i).getPrice());
 
             }
             System.out.println("\n\n* TOTAL:"+ord.getTotal());
